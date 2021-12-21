@@ -134,9 +134,11 @@ class HBNBCommand(cmd.Cmd):
                     val = re.search('^"(.*)"$', attr[1]).group(1)
                     # replace and substitute inner quotes with backslash
                     val = val.replace('_', ' ')
-                    val = re.sub(r'\"', r'"', val)
-                    new_instance.__dict__.update({
-                        attr[0]: val})
+                    if val.count('"') > 0:
+                        if val.count('"') == val.count('\\'):
+                            val = val.replace('\\\"', '"')
+                            new_instance.__dict__.update({
+                            attr[0]: val})
                 # check if it matches a digit (float or int)
                 elif re.search(r'^[-0-9\.]+$', attr[1]):
                     if attr[1].isdigit():
