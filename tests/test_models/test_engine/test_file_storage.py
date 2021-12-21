@@ -69,6 +69,16 @@ class test_fileStorage(unittest.TestCase):
             loaded = obj
         self.assertEqual(new.to_dict()['id'], loaded.to_dict()['id'])
 
+    def test_delete(self):
+        """Deletes obj instance"""
+        new = BaseModel()
+        storage.new(new)
+        storage.save()
+        before = len(storage.all().keys())
+        storage.delete(new)
+        after = len(storage.all().keys())
+        self.assertEqual(before - 1, after)
+
     def test_reload_empty(self):
         """ Load from an empty file """
         with open('file.json', 'w') as f:
