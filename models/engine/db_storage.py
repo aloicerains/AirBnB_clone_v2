@@ -6,6 +6,7 @@ from models.base_model import BaseModel, Base
 from sqlalchemy.orm import scoped_session
 from sqlalchemy.orm.session import sessionmaker
 
+
 class DBStorage:
     """Manages storage to MySQL DB"""
     __engine = None
@@ -44,13 +45,16 @@ class DBStorage:
         """Queries and returns all objects depending on cls"""
         d = {}
         if cls is None:
-            for k, v in self.classes().items():
-                for row in self.__session.query(v):
-                    d.update({'{}.{}'.format(type(row).__name__, 
-                                             row.id,): row})
+            # for k, v in self.classes().items():
+            #     for row in self.__session.query(v).all():
+            #         d.update({'{}.{}'.format(type(row).__name__, 
+            #                                  row.id,): row})
+            return self.__objects
         else:
+            cls = self.classes()[cls]
             for row in self.__session.query(cls).all():
-                d.update({'{}.{}'.format(type(cls).__name__, row.id,): row})
+                print(row)
+                d.update({'{}.{}'.format(type(cls).name, row.id,): row})
         return d
 
     def new(self, obj):
@@ -59,6 +63,7 @@ class DBStorage:
     
     def save(self):
         """Commits changes of current db session"""
+        Base.metadata.create_all(self.__engine)
         self.__session.commit()
 
     def delete(self, obj=None):
