@@ -2,6 +2,7 @@
 """ Console Module """
 import cmd
 import sys
+import re
 from models.base_model import BaseModel
 from models.__init__ import storage
 from models.user import User
@@ -124,22 +125,26 @@ class HBNBCommand(cmd.Cmd):
             return
         new_instance = HBNBCommand.classes[args[0]]()
         for j in range(1, len(args)):
-            if (args[j].count("=") == 1):
-                attr = args[j].split("=")
-                if type(attr[0] == str):
-                    if (attr[1].count('"') == 2):
-                        if (attr[1].count('_') > 0):
-                            attr[1] = attr[1].replace('_', ' ')
+            # check for param syntax: <key name>=<value>
+            if re.search('^.+=.+$', args[j]):
+                attr = args[j].split("=", 1)
+                # check if it matches a string
+                if re.search('^".*"$', attr[1]):
+                    # grab inner string from double quotes
+                    val = re.search('^"(.*)"$', attr[1]).group(1)
+                    # replace and substitute inner quotes with backslash
+                    val = val.replace('_', ' ')
+                    val = re.sub(r'\"', r'"', val)
+                    new_instance.__dict__.update({
+                        attr[0]: val})
+                # check if it matches a digit (float or int)
+                elif re.search(r'^[-0-9\.]+$', attr[1]):
+                    if attr[1].isdigit():
                         new_instance.__dict__.update({
-                            attr[0]: attr[1].strip('"')})
-                    elif (attr[1].replace('.', '', 1).isdigit()
-                          or attr[1].replace('.', '', 1).replace('-', '', 1)):
-                        if attr[1].isdigit():
-                            new_instance.__dict__.update({
-                                   attr[0]: int(attr[1])})
-                        else:
-                            new_instance.__dict__.update({
-                                    attr[0]: float(attr[1])})
+                                attr[0]: int(attr[1])})
+                    else:
+                        new_instance.__dict__.update({
+                                attr[0]: float(attr[1])})
         storage.new(new_instance)
         storage.save()
         print(new_instance.id)
