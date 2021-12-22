@@ -21,7 +21,7 @@ class State(BaseModel, Base):
         def cities(self):
             """method to find cities"""
             lis_t = []
-            for city in models.storage.all(City).values():
+            for city in storage.all(City).values():
                 if getattr(city, "state_id") == self.id:
                     lis_t.append(city)
             return(lis_t)
