@@ -2,8 +2,16 @@
 """ Place Module for HBNB project """
 import os
 from models.base_model import BaseModel, Base
-from sqlalchemy.orm import relationship
-from sqlalchemy import Column, String, ForeignKey, Integer, Float
+from sqlalchemy.orm import relationship, backref
+from sqlalchemy import Table, Column, String, ForeignKey, Integer, Float
+
+
+place_amenity = Table('place_amenity', Base.metadata,
+                      Column('place_id', String(60), ForeignKey('places.id'),
+                             primary_key=True, nullable=False),
+                      Column('amenity_id', String(60),
+                             ForeignKey('amenities.id'), primary_key=True,
+                             nullable=False))
 
 
 class Place(BaseModel, Base):
@@ -21,6 +29,8 @@ class Place(BaseModel, Base):
     longitude = Column(Float, nullable=True)
     reviews = relationship("Review", cascade='all, delete-orphan',
                            backref='place')
+    amenities = relationship("Amenity", secondary='place_amenity',
+                             backref='place_amenities', viewonly=False)
 
     @property
     def reviews(self):
@@ -31,3 +41,22 @@ class Place(BaseModel, Base):
             if review.place_id == self.id:
                 reviews.append(review)
             return reviews
+
+    @property
+    def amenities(self):
+        """Returns instances of amenities"""
+        from models.engine.file_storage import FileStorage
+        storage = FileStorage()
+        dic_t = storage.all('Amenity')
+        amenities = []
+        for amenity in dic_t.values():
+            if amenity.id in amenity_ids:
+                amenities.append(amenity)
+        return amenities
+
+    @amenities.setter
+    def amenities(self, obj):
+        """sets amenities_id attribute"""
+        if instance(obj, Amenity):
+            if self.id == obj.place_id:
+                self.amenity_ids.append(obj.id)
