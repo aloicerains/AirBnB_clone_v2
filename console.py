@@ -10,6 +10,7 @@ from models.state import State
 from models.city import City
 from models.amenity import Amenity
 from models.review import Review
+import re
 
 
 class HBNBCommand(cmd.Cmd):
@@ -219,24 +220,23 @@ class HBNBCommand(cmd.Cmd):
         """ Shows all objects, or all objects of a class"""
         if args:
             objects = storage.all(args)
-            print(objects)
         else:
             objects = storage.all()
-        my_list = []
+        l = '['
         if not args:
-            for key in objects:
-                my_list.append(objects[key])
-            print(my_list)
+            for key in objects.keys():
+                l += objects[key].__str__()
+            print(l + ']')
             return
         try:
             args = args.split(" ")
             if args[0] not in self.classes:
                 raise NameError()
-            for key in objects:
+            for key in objects.keys():
                 name = key.split('.')
                 if name[0] == args[0]:
-                    my_list.append(objects[key])
-            print(my_list)
+                    l += objects[key].__str__()
+            print(l + ']')
         except NameError:
             print("** class doesn't exist **")
 
