@@ -10,7 +10,7 @@ def do_pack():
     """Function compressing files
 
     Returns:
-        arpath(str): if correctly generated
+        archive(str): if correctly generated
         None: otherwise
     """
 
@@ -25,7 +25,6 @@ def do_pack():
                                   c_time.tm_min, c_time.tm_sec)
     full_path = "versions/web_static_{}.tgz".format(pname)
     archive = local("sudo tar -cvzf {} ./web_static/".format(full_path))
-    if archive:
-        return archieve
-    else:
+    if archive.failed:
         return None
+    return full_path

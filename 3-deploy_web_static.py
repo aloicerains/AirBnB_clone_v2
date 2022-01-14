@@ -28,10 +28,9 @@ def do_pack():
                                   c_time.tm_min, c_time.tm_sec)
     full_path = "versions/web_static_{}.tgz".format(pname)
     archive = local("sudo tar -cvzf {} ./web_static/".format(full_path))
-    if archive:
-        return archive
-    else:
+    if archive.failed:
         return None
+    return full_path
 
 
 def do_deploy(archive_path):
@@ -65,8 +64,9 @@ def do_deploy(archive_path):
     return False
 
 
-def deploy(path=do_pack()):
+def deploy():
     """Deployment task"""
-    if path:
-        return do_deploy(path)
+    pat = do_pack()
+    if path.exists(str(pat)):
+        return do_deploy(pat)
     return False
