@@ -59,7 +59,7 @@ def do_deploy(archive_path):
             .format(strip_name))
 
         run("sudo rm -rf /data/web_static/current")
-        run("sudo ln -s /data/web_static/releases/{}/ ".format(strip_name) +
+        run("sudo ln -snf /data/web_static/releases/{}/ ".format(strip_name) +
             "/data/web_static/current")
         return True
     return False

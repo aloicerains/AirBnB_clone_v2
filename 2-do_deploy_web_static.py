@@ -5,7 +5,7 @@ deploys archive to the web servers"""
 
 from fabric.api import *
 from os import path
-env.hosts = ["18.207.134.95"]
+env.hosts = ["18.207.134.95", "34.139.7.21"]
 
 
 def do_deploy(archive_path):
@@ -33,7 +33,7 @@ def do_deploy(archive_path):
             .format(strip_name))
 
         run("sudo rm -rf /data/web_static/current")
-        run("sudo ln -s /data/web_static/releases/{}/ ".format(strip_name) +
+        run("sudo ln -sfn /data/web_static/releases/{}/ ".format(strip_name) +
             "/data/web_static/current")
         return True
     return False
