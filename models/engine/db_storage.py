@@ -35,7 +35,7 @@ class DBStorage:
         dictionary = {}
         if cls:
             for obj in classes:
-                if cls == obj:
+                if cls == obj or cls.__name__ == obj:
                     result = self.__session.query(classes[obj]).all()
                     for r in result:
                         key = r.__class__.__name__ + "." + r.id
