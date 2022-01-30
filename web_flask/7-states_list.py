@@ -16,10 +16,9 @@ def list_states():
 
 
 @app.teardown_appcontext
-def teardown_storage():
+def teardown_storage(exception):
     """Closes current Session"""
     models.storage.close()
-
 
 
 if __name__ == "__main__":
