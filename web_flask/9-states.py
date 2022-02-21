@@ -4,9 +4,9 @@
 from flask import Flask, render_template
 import models
 from models.state import State
-
-
 app = Flask(__name__)
+
+
 @app.route('/states', strict_slashes=False)
 @app.route('/states/<state_id>', strict_slashes=False)
 def li_states(state_id=None):

@@ -4,9 +4,9 @@
 from flask import Flask, render_template
 import models
 from models.state import State
-
-
 app = Flask(__name__)
+
+
 @app.route('/cities_by_states', strict_slashes=False)
 def list_city_states():
     """Displays the list of states"""
